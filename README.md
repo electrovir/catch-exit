@@ -16,7 +16,7 @@ Features:
 
 # Examples
 
-There are [many examples within test files in the git repo](https://github.com/electrovir/catch-exit/test).
+There are [many examples within test files in the git repo](https://github.com/electrovir/catch-exit/tree/master/test).
 
 # Usage
 
