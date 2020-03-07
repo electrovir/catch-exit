@@ -1,5 +1,7 @@
 # catch-exit
 
+TESTING
+
 > Catch Node.js exit conditions, including errors and unhandled rejections, and fire callbacks.
 
 Features:
