@@ -1,4 +1,4 @@
-![test](https://github.com/electrovir/catch-exit/workflows/test/badge.svg)
+![tests](https://github.com/electrovir/catch-exit/workflows/tests/badge.svg)
 
 # catch-exit
 
