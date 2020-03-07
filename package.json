@@ -1,0 +1,54 @@
+{
+    "name": "catch-exit",
+    "version": "1.0.0",
+    "description": "Catch Node.js exit conditions, including errors and unhandled rejections, and fire callbacks.",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/electrovir/catch-exit"
+    },
+    "bugs": {
+        "url": "https://github.com/electrovir/catch-exit/issues"
+    },
+    "homepage": "https://github.com/electrovir/catch-exit",
+    "author": {
+        "name": "electrovir"
+    },
+    "keywords": [
+        "catch",
+        "exit",
+        "process",
+        "kill",
+        "error",
+        "death",
+        "cleanup",
+        "clean up",
+        "callback",
+        "nodejs",
+        "node js",
+        "node",
+        "catch exit",
+        "catch-exit",
+        "unhandledRejection",
+        "uncaughtException",
+        "SIGINT",
+        "SIGHUP",
+        "SIGTERM",
+        "SIGQUIT"
+    ],
+    "main": "dist/src/index.js",
+    "scripts": {
+        "prepublishOnly": "npm install && npm run test-compile && tsc",
+        "spellcheck": "cspell \"src/**/*.ts\" \"test/**/*.ts\" README.md LICENSE package.json",
+        "test": "npm run spellcheck && node dist/test/run-tests.js",
+        "test-compile": "rm -rf dist && tsc && npm test"
+    },
+    "dependencies": {
+        "cspell": "^4.0.55",
+        "human-signals": "^2.0.0",
+        "typescript": "^3.8.3"
+    },
+    "devDependencies": {
+        "@types/node": "^13.7.7"
+    }
+}
