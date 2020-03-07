@@ -1,3 +1,5 @@
+![test](https://github.com/electrovir/catch-exit/workflows/test/badge.svg)
+
 # catch-exit
 
 > Catch Node.js exit conditions, including errors and unhandled rejections, and fire callbacks.
