@@ -1,7 +1,7 @@
 .prettierrc.json
 .cspell.json
 tsconfig.json
-/.github
-/src
-/test
-/dist/test/*.d.ts
+.github
+src
+test
+dist/test/

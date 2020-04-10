@@ -101,6 +101,12 @@ async function runAllTests(tests: TestDefinition[], logging = true) {
         process.exit(1);
     }
 
+    if (logging) {
+        console.log('Compiling tests...');
+    }
+    // this is way faster than using ts-node for each test file since this compiles them all at once
+    await runShellCommand(`npm run compile`);
+
     const failures = await tests.reduce(
         async (combined, test) => {
             return (await combined) + Number(!(await runTestFile(test, logging)));

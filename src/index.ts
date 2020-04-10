@@ -66,7 +66,7 @@ function stringifyError(error: Error): string {
         return customStringifyError(error);
     }
 
-    return error.stack || error.toString();
+    return (error.stack || error.toString()) + '\n';
 }
 
 /**
@@ -140,7 +140,7 @@ export function enableLogging(enable = true): boolean {
 // console.log is async and these log functions must be sync
 function log(value: string): void {
     if (loggingEnabled) {
-        writeSync(1, value);
+        writeSync(1, value + '\n');
     }
 }
 function logError(value: string): void {

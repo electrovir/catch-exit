@@ -2,9 +2,9 @@
 
 # catch-exit
 
-> Catch Node.js exit conditions, including errors and unhandled rejections, and fire callbacks.
+Catch Node.js exit conditions, including errors and unhandled rejections.
 
-Features:
+## Features:
 
 -   Turns unhandled promise rejection warnings into errors
 -   Built with Typescript (has proper type exports)
@@ -16,7 +16,7 @@ Features:
 
 # Examples
 
-There are [many examples within test files in the git repo](https://github.com/electrovir/catch-exit/tree/master/test).
+There are [many examples within test files](https://github.com/electrovir/catch-exit/tree/master/test).
 
 # Usage
 
@@ -26,23 +26,22 @@ Install:
 npm install catch-exit
 ```
 
-Use in JavaScript:
-
 ```javascript
 import {addExitCallback} from 'catch-exit';
 
-addExitCallback(cleanUpCallback);
+addExitCallback(yourCleanUpCallback);
+// multiple callbacks can be registered
 addExitCallback(signal => {
-    // sett Async error section of README below for why you might need to do this
+    // see Async error section of README below for why you might need to do this
     if (signal !== 'exit') {
-        asyncCleanUpCallback();
+        yourAsyncCleanUpCallback();
     }
 });
 ```
 
 # Documentation
 
-This is just copied straight from [dist/src/index.d.ts](./dist/src/index.d.ts) in the [npm package](https://www.npmjs.com/package/catch-exit) or from [src/index.ts](./src/index.ts) in the [git repo](https://github.com/electrovir/catch-exit).
+This is just copied straight from the type declaration file generated from [src/index.ts](https://github.com/electrovir/catch-exit/blob/master/src/index.ts).
 
 If _any_ of the exported functions are called, all the exit and death listeners are attached.
 
@@ -123,17 +122,13 @@ export declare function setupCatchExit(options?: SetupOptions): void;
 export declare function enableLogging(enable?: boolean): boolean;
 ```
 
-Note that you only have access to functions marked with `export` at the beginning.
-
-# Dev
-
-## Async error
+# Async error
 
 If you see the following:
 
 > ERROR: Async operation of type "..." was created in "process.exit" callback
 
-This means that you're doing async stuff from within a callback that is used in `process.exit`. `process.exit` doesn't allow async stuff to complete reliably so your callbacks may not complete like you expect. To prevent this error getting logged, wrap your task creations in an if statement that excludes `'exit'` signals from doing anything async:
+This means that you're making async calls from within a callback that is used in `process.exit`. `process.exit` doesn't allow async execution to complete so your callbacks will not complete like you expect. To prevent this error getting logged, wrap your task creations in an if statement that excludes `'exit'` signals from doing anything async:
 
 ```typescript
 import {addExitCallback} from 'catch-exit';
@@ -146,15 +141,4 @@ addExitCallback(signal => {
         });
     }
 });
-```
-
-## Testing
-
-To run tests:
-
-```sh
-npm install
-npm test
-# to include a TS re-compile:
-npm run test-compile
 ```
