@@ -8,6 +8,9 @@ export type TestDefinition = {
         exitCode?: number;
 
         logLength?: number;
+        /**
+         * append stderr with stdout when checking logLength
+         */
         includeStderr?: boolean;
 
         // flips the expectation
@@ -213,9 +216,10 @@ export const definedTests: TestDefinition[] = [
         },
     },
     {
-        testName: 'test-setting-up-too-much',
+        testName: 'test-setting-up-tons',
         expected: {
-            exitCode: 1,
+            logLength: 0,
+            includeStderr: true,
         },
     },
 ];
