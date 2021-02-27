@@ -1,3 +1,7 @@
+import {join} from 'path';
+
+export const TEST_FILE_DIR = join('dist', 'test', 'tests');
+
 export type TestDefinition = {
     testName: string;
     expected: {
@@ -200,6 +204,18 @@ export const definedTests: TestDefinition[] = [
         testName: 'test-get-tests-by-name',
         expected: {
             exitCode: 0,
+        },
+    },
+    {
+        testName: 'test-get-tests-by-name',
+        expected: {
+            exitCode: 0,
+        },
+    },
+    {
+        testName: 'test-setting-up-too-much',
+        expected: {
+            exitCode: 1,
         },
     },
 ];

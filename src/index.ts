@@ -1,6 +1,6 @@
-import {signalsByName} from 'human-signals';
 import {createHook} from 'async_hooks';
 import {writeSync} from 'fs';
+import {signalsByName} from 'human-signals';
 
 /**
  * Add a callback function to be called upon process exit or death.
@@ -214,7 +214,11 @@ function setupProcessExitHandling(): void {
 
     signals.forEach(signal =>
         process.on(signal, () => {
-            exitHandler(signal, 128 + signalsByName[signal].number);
+            const signalNumber = signalsByName[signal]?.number;
+            if (signalNumber == undefined) {
+                throw new Error(`Failed to find number for signal "${signal}"`);
+            }
+            exitHandler(signal, 128 + signalNumber);
         }),
     );
 

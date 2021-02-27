@@ -1,15 +1,16 @@
-import {definedTests} from './test-definitions';
-import {join} from 'path';
 import {readdirSync} from 'fs';
+import {definedTests, TEST_FILE_DIR} from '../test-definitions';
 
 const testedFiles = new Set(definedTests.map(test => test.testName));
 
-const excludedFiles = ['run-tests', 'test-definitions'];
-
 const allTestFiles = new Set(
-    readdirSync(join('dist', 'test'))
-        .map(fileName => fileName.split('.')[0])
-        .filter(fileName => !excludedFiles.includes(fileName)),
+    readdirSync(TEST_FILE_DIR).map(fileName => {
+        const split = fileName.split('.');
+        if (!split.length) {
+            throw new Error(`Failed to split file name: ${fileName}`);
+        }
+        return split[0]!;
+    }),
 );
 
 const missingFiles: string[] = [];

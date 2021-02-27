@@ -1,8 +1,8 @@
-import {addExitCallback} from '../src';
+import {addExitCallback} from '../../src';
 
 addExitCallback(signal => {
     if (signal !== 'exit') {
-        new Promise(resolve => {
+        new Promise<void>(resolve => {
             setTimeout(() => {
                 resolve();
             }, 3000);

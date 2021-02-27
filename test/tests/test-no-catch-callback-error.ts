@@ -1,4 +1,4 @@
-import {addExitCallback} from '../src';
+import {addExitCallback} from '../../src';
 
 addExitCallback(() => {
     throw new Error(`This error SHOULD get thrown`);

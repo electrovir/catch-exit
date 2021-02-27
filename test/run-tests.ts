@@ -1,21 +1,19 @@
 import {exec} from 'child_process';
 import {join} from 'path';
-import {TestDefinition, definedTests, getTestsByNames} from './test-definitions';
-
-const TEST_FILE_DIR = 'dist/test';
+import {definedTests, getTestsByNames, TestDefinition, TEST_FILE_DIR} from './test-definitions';
 
 type ShellResult = {
     error: undefined | Error;
     stderr: string;
     stdout: string;
-    exitCode: number;
+    exitCode: number | null;
 };
 
 async function runShellCommand(command: string): Promise<ShellResult> {
     return new Promise<ShellResult>(async resolve => {
-        let execCallbackPromiseResolve: (value?: ShellResult) => void = () => {};
+        let execCallbackPromiseResolve: (value: ShellResult | PromiseLike<ShellResult>) => void = () => {};
         const execCallbackPromise = new Promise<ShellResult>(resolve => (execCallbackPromiseResolve = resolve));
-        let closePromiseResolve: (value?: Partial<ShellResult>) => void = () => {};
+        let closePromiseResolve: (value: Partial<ShellResult> | PromiseLike<Partial<ShellResult>>) => void = () => {};
         const closePromise = new Promise<Partial<ShellResult>>(resolve => (closePromiseResolve = resolve));
 
         const child = exec(command, (error, stdout, stderr) => {

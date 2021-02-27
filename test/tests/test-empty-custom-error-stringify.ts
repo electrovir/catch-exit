@@ -1,4 +1,4 @@
-import {registerStringifyError} from '../src';
+import {registerStringifyError} from '../../src';
 
 registerStringifyError(() => '');
 

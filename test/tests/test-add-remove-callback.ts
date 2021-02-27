@@ -1,4 +1,4 @@
-import {addExitCallback, removeExitCallback} from '../src';
+import {addExitCallback, removeExitCallback} from '../../src';
 
 let removedCallbackFired = false;
 

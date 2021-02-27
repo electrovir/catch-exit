@@ -1,4 +1,4 @@
-import {catchSignalStrings, setupCatchExit} from '../src';
+import {catchSignalStrings, setupCatchExit} from '../../src';
 
 function countListeners(): number {
     return catchSignalStrings.reduce((combined, signalString) => combined + process.listenerCount(signalString), 0);

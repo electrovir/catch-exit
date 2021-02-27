@@ -1,19 +1,7 @@
 {
     "name": "catch-exit",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Catch Node.js exit conditions, including errors and unhandled rejections.",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/electrovir/catch-exit"
-    },
-    "bugs": {
-        "url": "https://github.com/electrovir/catch-exit/issues"
-    },
-    "homepage": "https://github.com/electrovir/catch-exit",
-    "author": {
-        "name": "electrovir"
-    },
     "keywords": [
         "catch",
         "exit",
@@ -36,20 +24,36 @@
         "SIGTERM",
         "SIGQUIT"
     ],
+    "homepage": "https://github.com/electrovir/catch-exit",
+    "bugs": {
+        "url": "https://github.com/electrovir/catch-exit/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/electrovir/catch-exit"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "electrovir"
+    },
     "main": "dist/src/index.js",
     "scripts": {
-        "compile": "tsc",
-        "prepublishOnly": "npm install && npm run test && npm run spellcheck && rm -rf dist && npm run compile",
+        "compile": "rm -rf dist && tsc",
+        "prepublishOnly": "npm install && npm run test && rm -rf dist && npm run compile",
         "spellcheck": "cspell \"src/**/*.ts\" \"test/**/*.ts\" README.md LICENSE package.json",
-        "test": "ts-node test/run-tests.ts"
+        "test": "npm run spellcheck && npm run compile && node dist/test/run-tests.js",
+        "format": "prettier --ignore-path .gitignore --write  \"./**/*.{ts,css,html,json}\""
     },
     "dependencies": {
         "human-signals": "2.1.0"
     },
     "devDependencies": {
-        "@types/node": "^13.11.1",
-        "cspell": "4.0.55",
-        "ts-node": "8.8.2",
-        "typescript": "3.8.3"
+        "@types/node": "^14.14.31",
+        "cspell": "5.3.3",
+        "prettier": "^2.2.1",
+        "prettier-plugin-organize-imports": "^1.1.1",
+        "prettier-plugin-packagejson": "^2.2.10",
+        "prettier-plugin-sort-json": "^0.0.2",
+        "typescript": "4.2.2"
     }
 }

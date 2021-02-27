@@ -1,4 +1,4 @@
-import {setupCatchExit} from '../src';
+import {setupCatchExit} from '../../src';
 
 setupCatchExit();
 

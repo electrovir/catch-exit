@@ -1,3 +1,15 @@
 {
-    "words": ["pipewrap", "sighup", "sigint", "signalwrap", "sigquit", "sigterm", "ttywrap", "electrovir", "microtasks"]
+    "version": "0.1",
+    "words": [
+        "electrovir",
+        "microtasks",
+        "packagejson",
+        "pipewrap",
+        "sighup",
+        "sigint",
+        "signalwrap",
+        "sigquit",
+        "sigterm",
+        "ttywrap"
+    ]
 }

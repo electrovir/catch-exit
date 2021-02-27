@@ -1,4 +1,4 @@
-import {getTestsByNames, definedTests} from './test-definitions';
+import {definedTests, getTestsByNames} from '../test-definitions';
 
 if (getTestsByNames(definedTests.map(test => test.testName)).length !== definedTests.length) {
     throw new Error(`Not able to get all tests by name!`);
