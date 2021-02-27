@@ -239,4 +239,6 @@ function setupProcessExitHandling(): void {
         log('uncaughtException listener');
         exitHandler('uncaughtException', 1, error);
     });
+
+    alreadySetup = true;
 }
