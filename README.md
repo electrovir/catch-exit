@@ -14,6 +14,8 @@ Catch Node.js exit conditions, including errors and unhandled rejections.
 -   Allows custom error-to-string function
 -   Allows enabling of logging for deeper debugging
 
+Officially supported on Node.js versions > `12.x` but probably works on any version > `8.x`. (A dev dependency doesn't work < `12.x` which isn't included when installing via npm.)
+
 # Examples
 
 There are [many examples within test files](https://github.com/electrovir/catch-exit/tree/master/test).
