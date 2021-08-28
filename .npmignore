@@ -1,7 +1,10 @@
-.prettierrc.json
-.cspell.json
 tsconfig.json
 .github
 src
 test
 dist/test/
+.cspell-base.json
+.cspell.json
+.gitattributes
+.prettierrc.js
+.vscode

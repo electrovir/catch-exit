@@ -1,0 +1,3 @@
+import {enableLogging} from '../..';
+
+enableLogging();

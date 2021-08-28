@@ -2,16 +2,22 @@
     "compilerOptions": {
         "alwaysStrict": true,
         "declaration": true,
+        "esModuleInterop": true,
+        "exactOptionalPropertyTypes": true,
         "forceConsistentCasingInFileNames": true,
         "module": "commonjs",
-        "noEmitOnError": true,
         "noImplicitAny": true,
+        "noImplicitOverride": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "noUncheckedIndexedAccess": true,
         "outDir": "dist",
+        "rootDir": "src",
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true,
         "strict": true,
-        "target": "es6"
+        "target": "es6",
+        "useUnknownInCatchVariables": true
     },
-    "include": ["src/**/*", "test/**/*"]
+    "exclude": ["node_modules", "dist", "test-repos", "scripts"]
 }
