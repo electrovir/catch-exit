@@ -36,7 +36,7 @@
     "author": {
         "name": "electrovir"
     },
-    "main": "dist/src/index.js",
+    "main": "dist/index.js",
     "scripts": {
         "prepublishOnly": "npm run test:full",
         "spellcheck": "virmator spellcheck --extendable-config",
