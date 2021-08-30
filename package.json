@@ -1,6 +1,6 @@
 {
     "name": "catch-exit",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Catch Node.js exit conditions, including errors and unhandled rejections.",
     "keywords": [
         "catch",
@@ -40,7 +40,7 @@
     "scripts": {
         "prepublishOnly": "npm run test:full",
         "spellcheck": "virmator spellcheck --extendable-config",
-        "test": "virmator compile && node dist/test/run-tests.js",
+        "test": "virmator compile && node dist/test/run-tests.js && virmator test",
         "test:full": "npm test && npm run spellcheck && virmator format check",
         "format": "virmator format write"
     },
@@ -48,8 +48,10 @@
         "human-signals": "2.1.0"
     },
     "devDependencies": {
-        "@types/node": "^16.7.4",
+        "@types/fs-extra": "^9.0.12",
+        "@types/node": "^16.7.6",
+        "fs-extra": "^10.0.0",
         "typescript": "^4.4.2",
-        "virmator": "^1.0.5"
+        "virmator": "^1.0.6"
     }
 }
