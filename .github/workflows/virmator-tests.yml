@@ -1,4 +1,4 @@
-name: virmator-tests
+name: tests
 
 on:
     push:

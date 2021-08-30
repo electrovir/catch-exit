@@ -5,14 +5,14 @@ testGroup((runTest) => {
     const packageJsonPath = 'package.json';
 
     runTest({
-        description: 'package.json file contains valid bin path',
+        description: 'package.json file contains valid main path',
         expect: true,
         test: async () => {
             const packageJson = JSON.parse((await readFile(packageJsonPath)).toString());
 
-            const binDir = packageJson.main;
+            const mainPath = packageJson.main;
 
-            return existsSync(binDir);
+            return existsSync(mainPath);
         },
     });
 });
