@@ -1,36 +1,4 @@
-import {join} from 'path';
-
-export const TEST_FILE_DIR = join('dist', 'test', 'tests');
-
-export type TestDefinition = {
-    testName: string;
-    expected: {
-        exitCode?: number;
-
-        logLength?: number;
-        /** Append stderr with stdout when checking logLength */
-        includeStderr?: boolean;
-
-        // flips the expectation
-        // for example, if exitCode is defined, then the test will pass if it does NOT exit with exitCode
-        inverse?: boolean;
-    };
-};
-
-export function noErrorExit() {
-    process.exit(0);
-}
-
-export function getTestsByNames(names: string[]) {
-    return names.map((name) => {
-        const test = definedTests.find((test) => test.testName === name);
-        if (test) {
-            return test;
-        } else {
-            throw new Error(`No test with name ${name} found.`);
-        }
-    });
-}
+import {TestDefinition} from './test-util/definition-type';
 
 export const definedTests: TestDefinition[] = [
     {
@@ -191,12 +159,6 @@ export const definedTests: TestDefinition[] = [
     },
     {
         testName: 'test-listener-count',
-        expected: {
-            exitCode: 0,
-        },
-    },
-    {
-        testName: 'test-running-all-tests',
         expected: {
             exitCode: 0,
         },

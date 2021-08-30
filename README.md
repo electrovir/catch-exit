@@ -1,4 +1,4 @@
-![tests](https://github.com/electrovir/catch-exit/workflows/tests/badge.svg)
+[![tests](https://github.com/electrovir/catch-exit/actions/workflows/virmator-tests.yml/badge.svg?branch=master)](https://github.com/electrovir/catch-exit/actions/workflows/virmator-tests.yml)
 
 # catch-exit
 

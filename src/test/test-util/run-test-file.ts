@@ -1,6 +1,8 @@
 import {exec} from 'child_process';
 import {join} from 'path';
-import {definedTests, getTestsByNames, TestDefinition, TEST_FILE_DIR} from './test-definitions';
+import {interpolationSafeWindowsPath} from 'virmator/dist/augments/string';
+import {testFileDir} from '../files';
+import {TestDefinition} from './definition-type';
 
 type ShellResult = {
     error: undefined | Error;
@@ -63,13 +65,11 @@ function getObjectTypedKeys<T extends object>(input: T): (keyof T)[] {
     return Object.keys(input) as (keyof T)[];
 }
 
-async function runTestFile(test: TestDefinition, logging: boolean): Promise<boolean> {
-    if (logging) {
-        console.log(`${test.testName}:`);
-    }
-
+export async function runTestFile(test: TestDefinition): Promise<boolean> {
     let failureMessage = '';
-    const results = await runShellCommand(`node ${join(TEST_FILE_DIR, test.testName + '.js')}`);
+    const results = await runShellCommand(
+        interpolationSafeWindowsPath(`node ${join(testFileDir, test.testName + '.js')}`),
+    );
 
     if (test.expected.exitCode != undefined) {
         if (test.expected.inverse && results.exitCode === test.expected.exitCode) {
@@ -89,49 +89,5 @@ async function runTestFile(test: TestDefinition, logging: boolean): Promise<bool
         throw new Error(`No test expectation was defined for ${test.testName}`);
     }
 
-    if (failureMessage) {
-        if (logging) {
-            console.error(results);
-            console.error(`\tFailed: ${failureMessage}`);
-        }
-        return false;
-    } else {
-        if (logging) {
-            console.log(`\tPassed.\n`);
-        }
-        return true;
-    }
-}
-
-async function runAllTests(tests: TestDefinition[], logging = true) {
-    if (!tests.length) {
-        console.log(`No tests defined.`);
-        process.exit(1);
-    }
-
-    if (logging) {
-        console.log('Compiling tests...');
-    }
-    // this is way faster than using ts-node for each test file since this compiles them all at once
-    await runShellCommand(`npm run compile`);
-
-    const failures = await tests.reduce(async (combined, test) => {
-        return (await combined) + Number(!(await runTestFile(test, logging)));
-    }, new Promise<number>((resolve) => resolve(0)));
-
-    if (failures) {
-        console.log(`${failures} tests failed.`);
-        process.exit(1);
-    } else {
-        console.log(`All tests passed.`);
-        process.exit(0);
-    }
-}
-
-const args = process.argv.slice(2);
-
-if (args.length) {
-    runAllTests(getTestsByNames(args));
-} else {
-    runAllTests(definedTests);
+    return !failureMessage;
 }
