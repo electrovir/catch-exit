@@ -18,7 +18,7 @@ Officially supported on Node.js versions > `12.x` but probably works on any vers
 
 # Examples
 
-There are [many examples within test files](https://github.com/electrovir/catch-exit/tree/master/test).
+There are [many examples within test files](https://github.com/electrovir/catch-exit/tree/master/src/test/files).
 
 # Usage
 
