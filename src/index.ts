@@ -61,7 +61,11 @@ const signals: InterceptedSignals[] = [
     'SIGQUIT',
 ];
 /** The different signal types that can be passed to the exit callback. */
-export const catchSignalStrings: CatchSignals[] = [...signals, 'exit', 'uncaughtException'];
+export const catchSignalStrings: CatchSignals[] = [
+    ...signals,
+    'exit',
+    'uncaughtException',
+];
 
 function stringifyError(error: unknown): string {
     if (customStringifyError) {
@@ -149,7 +153,11 @@ function logError(value: string): void {
 
 const callbacks: ExitCallback[] = [];
 // not sure what all the different async types mean but I seem to not care about at least these
-const ignoredAsyncTypes = ['TTYWRAP', 'SIGNALWRAP', 'PIPEWRAP'];
+const ignoredAsyncTypes = [
+    'TTYWRAP',
+    'SIGNALWRAP',
+    'PIPEWRAP',
+];
 
 const asyncHook = createHook({
     init(id, type) {
