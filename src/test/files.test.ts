@@ -1,46 +1,40 @@
-import {readdir} from 'fs-extra';
-import {testGroup} from 'test-vir';
+import {readdir} from 'fs/promises';
+import {testFileDir} from '../file-paths';
 import {definedTests} from './files-definitions';
-import {testFileDir} from './files/index';
 import {runTestFile} from './test-util/run-test-file';
 
-testGroup(async (runTest) => {
+describe('file tests', () => {
     definedTests.forEach((test) => {
-        runTest({
-            description: test.testName,
-            expect: true,
-            test: async () => {
-                return await runTestFile(test);
-            },
+        it(test.testName, async () => {
+            expect(await runTestFile(test)).toBe('');
         });
     });
 
-    const testNames = definedTests.map((test) => test.testName);
-    const testFiles = (await readdir(testFileDir))
-        .filter((testFile) => testFile !== 'index.ts')
-        .map((fileName) => fileName.replace(/\.[jt]s$/, ''));
+    async function getTests() {
+        const testNames = definedTests.map((test) => test.testName);
+        const testFiles = (await readdir(testFileDir))
+            .filter((testFile) => testFile !== 'index.ts')
+            .map((fileName) => fileName.replace(/\.[jt]s$/, ''));
 
-    runTest({
-        description: 'no test files are missing from test definitions',
-        expect: [],
-        test: async () => {
-            const testFilesMissingTestDefinitions = testFiles.filter((testFile) => {
-                !testNames.includes(testFile);
-            });
+        return {testNames, testFiles};
+    }
 
-            return testFilesMissingTestDefinitions;
-        },
+    it('should have corresponding test names for every test file', async () => {
+        const {testFiles, testNames} = await getTests();
+
+        const testFilesMissingTestDefinitions = testFiles.filter((testFile) => {
+            !testNames.includes(testFile);
+        });
+
+        expect(testFilesMissingTestDefinitions).toEqual([]);
     });
 
-    runTest({
-        description: 'no test definitions are missing test files',
-        expect: [],
-        test: async () => {
-            const testDefinitionsMissingFiles = testNames.filter((testName) => {
-                return !testFiles.includes(testName);
-            });
+    it('', async () => {
+        const {testFiles, testNames} = await getTests();
+        const testDefinitionsMissingFiles = testNames.filter((testName) => {
+            return !testFiles.includes(testName);
+        });
 
-            return testDefinitionsMissingFiles;
-        },
+        expect(testDefinitionsMissingFiles).toEqual([]);
     });
 });

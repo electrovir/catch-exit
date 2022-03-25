@@ -1,18 +1,14 @@
-import {existsSync, readFile} from 'fs-extra';
-import {testGroup} from 'test-vir';
+import {existsSync} from 'fs';
+import {readFile} from 'fs/promises';
 
-testGroup((runTest) => {
+describe('package.json', () => {
     const packageJsonPath = 'package.json';
 
-    runTest({
-        description: 'package.json file contains valid main path',
-        expect: true,
-        test: async () => {
-            const packageJson = JSON.parse((await readFile(packageJsonPath)).toString());
+    it('package.json file contains valid main path', async () => {
+        const packageJson = JSON.parse((await readFile(packageJsonPath)).toString());
 
-            const mainPath = packageJson.main;
-
-            return existsSync(mainPath);
-        },
+        const mainPath = packageJson.main;
+        expect(mainPath).toBeTruthy();
+        expect(existsSync(mainPath)).toBe(true);
     });
 });
