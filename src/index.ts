@@ -1,175 +1,120 @@
-import {createHook} from 'async_hooks';
-import {writeSync} from 'fs';
 import {signalsByName} from 'human-signals';
+import {createHook} from 'node:async_hooks';
+import {writeSync} from 'node:fs';
 
 /**
  * Add a callback function to be called upon process exit or death.
  *
- * @param callback The callback function with signature: (signal: CatchSignals, exitCode?: number,
- *   error?: Error) => undefined | void
- *
- *   Typed to block async functions. Async functions will not work for 'exit' events, triggered from
- *   process.exit(), but will work with other events this catches. If you wish to perform async
- *   functions have this callback call an async function but remember it won't be awaited if the
- *   signal is 'exit'.
+ * @category Main
  * @returns The callback itself for chaining purposes.
  */
-export function addExitCallback(callback: ExitCallback): ExitCallback {
-    // setup the exit handling once a callback has actually been added
+export function addExitCallback(
+    /**
+     * Typed to block async functions. Async functions will not work for 'exit' events, triggered
+     * from process.exit(), but will work with other events this catches. If you wish to perform
+     * async functions have this callback call an async function but remember it won't be awaited if
+     * the signal is 'exit'.
+     */
+    callback: ExitCallback,
+): ExitCallback {
+    /** Only setup the exit handling once a callback has actually been added. */
     setupProcessExitHandling();
     callbacks.push(callback);
     return callback;
 }
 
 /**
- * Remove the given callback function from the list of callbacks to be called on process exit or death.
+ * Remove the given callback function from the set of previously added exit callbacks.
  *
- * @param callback The exact callback (exact by reference) added at some earlier point by addExitCallback.
- * @returns The callback removed or undefined if the given callback was not found.
+ * @category Main
+ * @returns The callback removed or `undefined` if the given callback was not found.
  */
-export function removeExitCallback(callback: ExitCallback): ExitCallback | undefined {
-    // assume that at this point the user wants the handler to be setup
-    setupProcessExitHandling();
+export function removeExitCallback(
+    /** The exact callback (by reference) to remove, previously added by {@link addExitCallback}. */
+    callback: ExitCallback,
+): ExitCallback | undefined {
     const index = callbacks.indexOf(callback);
     return index > -1 ? callbacks.splice(index, 1)[0] : undefined;
 }
 
 /**
- * This callback cannot be async because on process exit async calls can't be awaited and won't
- * finish. See documentation on addExitCallback for details.
+ * If this callback is async, it won't actually complete or be awaited in some cases, like when
+ * calling `process.exit()`.
+ *
+ * @category Internal
  */
 export type ExitCallback = (
     signal: CatchSignals,
     exitCode?: number,
     error?: Error,
-) => void | undefined; // return type set to prevent passing in functions with Promise<void> return type
+) => void | Promise<void>;
 
 /**
- * Various different signals that can be passed to ExitCallback as "signal". "unhandledRejection" is
- * not a part of this because these are all turned into "uncaughtException" errors
+ * Signals listened to by this package.
+ *
+ * @category Internal
  */
-export type CatchSignals = InterceptedSignals | 'exit' | 'uncaughtException';
-type InterceptedSignals = 'SIGINT' | 'SIGHUP' | 'SIGTERM' | 'SIGQUIT';
-
-// used in the listener far setup below
-const signals: InterceptedSignals[] = [
+export const interceptedSignals = [
     'SIGHUP',
-    // catches ctrl+c event
+    /** Catches ctrl+c event. */
     'SIGINT',
-    // catches "kill pid"
+    /** Catches "kill pid". */
     'SIGTERM',
     'SIGQUIT',
-];
-/** The different signal types that can be passed to the exit callback. */
-export const catchSignalStrings: CatchSignals[] = [
-    ...signals,
+] as const;
+
+/**
+ * Signals that may be passed to {@link ExitCallback} as its `signal` argument.
+ * `'unhandledRejection'` is not a part of this because those are all turned into
+ * `'uncaughtException'` errors.
+ *
+ * @category Internal
+ */
+export const catchSignalStrings = [
+    ...interceptedSignals,
     'exit',
     'uncaughtException',
-];
-
-function stringifyError(error: unknown): string {
-    if (customStringifyError) {
-        return customStringifyError(error);
-    }
-
-    if (error instanceof Error) {
-        return (error.stack || error.toString()) + '\n';
-    } else {
-        return String(error);
-    }
-}
+] as const;
 
 /**
- * Allow customization of error message printing. Defaults to just printing the stack trace.
+ * Signals that may be passed to {@link ExitCallback} as its `signal` argument.
+ * `'unhandledRejection'` is not a part of this because those are all turned into
+ * `'uncaughtException'` errors.
  *
- * @param errorStringifyFunction Function that accepts an error and returns a string
+ * @category Internal
  */
-export function registerStringifyError(errorStringifyFunction?: ErrorStringifyFunction): void {
-    // assume that at this point the user wants the handler to be setup
-    setupProcessExitHandling();
-    customStringifyError = errorStringifyFunction;
-}
+export type CatchSignals = (typeof catchSignalStrings)[number];
 
-/**
- * Used to create custom error logging.
- *
- * @param error Error that was thrown that can be used in the string
- * @returns A string that will be printed as the error's stderr message
- */
-export type ErrorStringifyFunction = (error: unknown) => string;
-let customStringifyError: undefined | ErrorStringifyFunction;
-
-/** Options to be configured immediately on setup instead of set later by their respective functions. */
-export type SetupOptions = {
-    /** Enables logging immediately on setup */
-    loggingEnabled?: boolean;
-    /** Defines a custom error stringify function immediately on setup */
-    customErrorStringify?: ErrorStringifyFunction;
-};
-
-/**
- * Setup process exit or death handlers without adding any callbacks
- *
- * @param options Setup options, see SetupOptions type for details
- */
-export function setupCatchExit(options?: SetupOptions): void {
-    setupProcessExitHandling();
-
-    if (options) {
-        const {loggingEnabled, customErrorStringify} = options;
-
-        if (customErrorStringify) {
-            registerStringifyError(customErrorStringify);
-        }
-        if (loggingEnabled) {
-            enableLogging();
-        }
-    }
-}
-
-let loggingEnabled = false;
-/**
- * Enable logging of this package's methods.
- *
- * @param enable True (default) to enable, false to disable
- * @returns The value of the passed or defaulted "enable" argument
- */
-export function enableLogging(enable = true): boolean {
-    // assume that at this point the user wants the handler to be setup
-    setupProcessExitHandling();
-    loggingEnabled = enable;
-    return enable;
-}
-
-// console.log is async and these log functions must be sync
-function log(value: string): void {
-    if (loggingEnabled) {
-        writeSync(1, value + '\n');
-    }
-}
 function logError(value: string): void {
     writeSync(2, value);
 }
 
 const callbacks: ExitCallback[] = [];
-// not sure what all the different async types mean but I seem to not care about at least these
+
+/** I'm not sure what all the different async types mean but at least these don't seem to matter. */
 const ignoredAsyncTypes = [
     'TTYWRAP',
     'SIGNALWRAP',
     'PIPEWRAP',
 ];
 
+let asyncWarningAlreadyLogged = false;
+
 const asyncHook = createHook({
     init(id, type) {
-        if (!ignoredAsyncTypes.includes(type)) {
-            writeSync(
-                2,
-                `\nERROR: Async operation of type "${type}" was created in "process.exit" callback. This will not run to completion as "process.exit" will not complete async tasks.\n`,
+        if (!ignoredAsyncTypes.includes(type) && !asyncWarningAlreadyLogged) {
+            asyncWarningAlreadyLogged = true;
+            logError(
+                "\nWarning: an async 'process.exit' callback was used; it will not run to completion as 'process.exit' will not complete async tasks.\nSee https://www.npmjs.com/package/catch-exit#async-warning for details.\n",
             );
         }
     },
 });
 
+/**
+ * This is used to prevent attaching signal listeners multiple times (which isn't necessary and
+ * actually causes issues).
+ */
 let alreadySetup = false;
 
 /**
@@ -178,28 +123,35 @@ let alreadySetup = false;
  */
 let alreadyExiting = false;
 
+function stringifyError(error: unknown): string {
+    if (error instanceof Error) {
+        return (error.stack || error.toString()) + '\n';
+    } else {
+        return String(error);
+    }
+}
+
 function setupProcessExitHandling(): void {
     if (alreadySetup) {
         return;
     }
-    // so the program will not close instantly
-    // process.stdin.resume();
+    alreadySetup = true;
+
     function exitHandler(signal: CatchSignals, exitCode?: number, inputError?: Error): void {
-        log(`handling signal: ${signal} with code ${exitCode}`);
         if (!alreadyExiting) {
-            log('setting alreadyExiting');
             alreadyExiting = true;
             try {
-                log(`Firing ${callbacks.length} callbacks`);
-                // only exit prevents async callbacks from completing
+                /** Only the exit signal has async issues. */
                 if (signal === 'exit') {
                     asyncHook.enable();
                 }
                 callbacks.forEach((callback) => callback(signal, exitCode, inputError));
                 asyncHook.disable();
             } catch (callbackError) {
-                log('Error in callback');
-                // 7 here means there was an error in the exit handler, which there was if we got to this point
+                /**
+                 * 7 here means there was an error in the exit handler, which there was if we got to
+                 * this point.
+                 */
                 exitWithError(callbackError, 7);
             }
             if (inputError instanceof Error) {
@@ -207,46 +159,33 @@ function setupProcessExitHandling(): void {
             } else {
                 process.exit(exitCode);
             }
-        } else {
-            log('Already exiting, not doing anything');
-            return;
         }
     }
 
-    // prevents all exit codes from being 7 when they shouldn't be
+    /** Prevents all exit codes from being 7 when they shouldn't be. */
     function exitWithError(error: unknown, code?: number) {
-        log(`Exiting with error and code ${code}`);
         logError(stringifyError(error));
         process.exit(code);
     }
 
-    signals.forEach((signal) =>
+    interceptedSignals.forEach((signal) =>
         process.on(signal, () => {
-            const signalNumber = signalsByName[signal]?.number;
-            if (signalNumber == undefined) {
-                throw new Error(`Failed to find number for signal "${signal}"`);
-            }
+            const signalNumber = signalsByName[signal].number;
             exitHandler(signal, 128 + signalNumber);
         }),
     );
 
     process.on('exit', (code) => {
-        log(`exit listener with code ${code}`);
         exitHandler('exit', code);
     });
 
     process.on('unhandledRejection', (reason) => {
-        log('unhandledRejection listener');
-        const error = reason instanceof Error ? reason : new Error(reason ? `${reason}` : '');
+        const error = reason instanceof Error ? reason : new Error(String(reason));
         error.name = 'UnhandledRejection';
         throw error;
     });
 
-    // catches uncaught exceptions
     process.on('uncaughtException', (error) => {
-        log('uncaughtException listener');
         exitHandler('uncaughtException', 1, error);
     });
-
-    alreadySetup = true;
 }

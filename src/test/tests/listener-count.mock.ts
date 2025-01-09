@@ -1,4 +1,4 @@
-import {catchSignalStrings, setupCatchExit} from '../..';
+import {addExitCallback, catchSignalStrings} from '../../index.js';
 
 function countListeners(): {signal: string; count: number}[] {
     return catchSignalStrings
@@ -17,7 +17,7 @@ if (initialListeners.length) {
     throw new Error(`Listeners are already present!`);
 }
 
-setupCatchExit();
+addExitCallback(() => {});
 
 const afterListeners = countListeners();
 

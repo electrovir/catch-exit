@@ -1,10 +1,11 @@
-import {addExitCallback} from '../..';
+import {addExitCallback} from '../../index.js';
 
 addExitCallback(() => {
-    console.log('this log works');
+    console.info('this log works');
     new Promise<void>((resolve) => {
         setTimeout(() => {
             resolve();
+            console.info('this log does not work');
         }, 3000);
     });
 });

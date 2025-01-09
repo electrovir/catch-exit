@@ -1,4 +1,4 @@
-import {addExitCallback} from '../..';
+import {addExitCallback} from '../../index.js';
 
 addExitCallback((signal) => {
     if (signal !== 'exit') {

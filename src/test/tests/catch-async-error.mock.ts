@@ -1,7 +1,6 @@
-import {addExitCallback} from '../..';
-import {noErrorExit} from '../test-util/no-error-exit';
+import {addExitCallback} from '../../index.js';
 
-addExitCallback(noErrorExit);
+addExitCallback(() => process.exit(0));
 
 async function testAsyncFunction() {
     const errorObject: any = {};

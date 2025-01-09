@@ -65,6 +65,9 @@
         "human-signals": "8.0.0"
     },
     "devDependencies": {
+        "@augment-vir/assert": "^31.6.0",
+        "@augment-vir/node": "^31.6.0",
+        "@augment-vir/test": "^31.6.0",
         "@eslint/eslintrc": "^3.2.0",
         "@eslint/js": "^9.14.0",
         "@stylistic/eslint-plugin": "^2.12.1",

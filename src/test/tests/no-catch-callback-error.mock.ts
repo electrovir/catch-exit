@@ -1,4 +1,4 @@
-import {addExitCallback} from '../..';
+import {addExitCallback} from '../../index.js';
 
 addExitCallback(() => {
     throw new Error(`This error SHOULD get thrown`);

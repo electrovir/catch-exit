@@ -1,6 +1,6 @@
-import {setupCatchExit} from '../..';
+import {addExitCallback} from '../../index.js';
 
-setupCatchExit();
+addExitCallback(() => {});
 
 process.emit('SIGQUIT', 'SIGQUIT');
 

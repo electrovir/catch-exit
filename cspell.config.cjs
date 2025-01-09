@@ -7,5 +7,8 @@ module.exports = {
     ],
     words: [
         ...baseConfig.words,
+        'pipewrap',
+        'signalwrap',
+        'ttywrap',
     ],
 };

@@ -1,6 +1,6 @@
-import {setupCatchExit} from '../..';
+import {addExitCallback} from '../../index.js';
 
-setupCatchExit();
+addExitCallback(() => {});
 
 const errorObject: any = {};
 errorObject.doesNotExist['SHOULD have error here'];

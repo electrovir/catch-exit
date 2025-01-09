@@ -1,4 +1,4 @@
-import {addExitCallback, removeExitCallback} from '../..';
+import {addExitCallback, removeExitCallback} from '../../index.js';
 
 let removedCallbackFired = false;
 
