@@ -10,6 +10,7 @@ export default [
         ignores: [
             /** Add file globs that should be ignored. */
             'src/test/tests',
+            'src/examples',
         ],
     },
     {
