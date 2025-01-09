@@ -2,6 +2,8 @@ import {signalsByName} from 'human-signals';
 import {createHook} from 'node:async_hooks';
 import {writeSync} from 'node:fs';
 
+const callbacks = new Set<ExitCallback>();
+
 /**
  * Add a callback function to be called upon process exit or death.
  *
@@ -19,7 +21,7 @@ export function addExitCallback(
 ): ExitCallback {
     /** Only setup the exit handling once a callback has actually been added. */
     setupProcessExitHandling();
-    callbacks.push(callback);
+    callbacks.add(callback);
     return callback;
 }
 
@@ -27,14 +29,13 @@ export function addExitCallback(
  * Remove the given callback function from the set of previously added exit callbacks.
  *
  * @category Main
- * @returns The callback removed or `undefined` if the given callback was not found.
+ * @returns `true` if the callback was found and removed. `false` otherwise.
  */
 export function removeExitCallback(
     /** The exact callback (by reference) to remove, previously added by {@link addExitCallback}. */
     callback: ExitCallback,
-): ExitCallback | undefined {
-    const index = callbacks.indexOf(callback);
-    return index > -1 ? callbacks.splice(index, 1)[0] : undefined;
+): boolean {
+    return callbacks.delete(callback);
 }
 
 /**
@@ -89,8 +90,6 @@ function logError(value: string): void {
     writeSync(2, value);
 }
 
-const callbacks: ExitCallback[] = [];
-
 /** I'm not sure what all the different async types mean but at least these don't seem to matter. */
 const ignoredAsyncTypes = [
     'TTYWRAP',
@@ -105,7 +104,7 @@ const asyncHook = createHook({
         if (!ignoredAsyncTypes.includes(type) && !asyncWarningAlreadyLogged) {
             asyncWarningAlreadyLogged = true;
             logError(
-                "\nWarning: an async 'process.exit' callback was used; it will not run to completion as 'process.exit' will not complete async tasks.\nSee https://www.npmjs.com/package/catch-exit#async-warning for details.\n",
+                "\nWarning: an async 'process.exit' callback was used. Async exit callbacks will not run to completion because 'process.exit' does not complete async tasks.\nSee https://www.npmjs.com/package/catch-exit#async-warning for details.\n",
             );
         }
     },
@@ -162,7 +161,7 @@ function setupProcessExitHandling(): void {
         }
     }
 
-    /** Prevents all exit codes from being 7 when they shouldn't be. */
+    /** Prevents all exit codes from going straight to `7` when they shouldn't be. */
     function exitWithError(error: unknown, code?: number) {
         logError(stringifyError(error));
         process.exit(code);

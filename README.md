@@ -39,9 +39,8 @@ addExitCallback((signal) => {
 ```
 
 -   Read the full docs here: https://electrovir.github.io/catch-exit
--   There are [many examples within test files](https://github.com/electrovir/catch-exit/tree/dev/src/test/tests).
 
-# Async warning
+## Async Warning
 
 You may see the following logged to your terminal:
 

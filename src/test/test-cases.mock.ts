@@ -6,9 +6,10 @@ export type TestCase = {
         logLength?: number;
         /** Append stderr with stdout when checking logLength */
         includeStderr?: boolean;
-
-        // flips the expectation
-        // for example, if exitCode is defined, then the test will pass if it does NOT exit with exitCode
+        /**
+         * Inverses the expectation when set to `true`. For example, if `exitCode` is defined, then
+         * the test will pass if it does NOT exit with `exitCode`.
+         */
         inverse?: boolean;
     };
 };
@@ -18,6 +19,30 @@ export const definedTests: TestCase[] = [
         testName: 'add-remove-callback',
         expected: {
             exitCode: 0,
+        },
+    },
+    {
+        testName: 'callback-thrown-string',
+        expected: {
+            exitCode: 7,
+            includeStderr: true,
+            logLength: 1,
+        },
+    },
+    {
+        testName: 'callback-error-no-stack',
+        expected: {
+            exitCode: 7,
+            includeStderr: true,
+            logLength: 1,
+        },
+    },
+    {
+        testName: 'callback-unhandled-rejection-string',
+        expected: {
+            exitCode: 1,
+            includeStderr: true,
+            logLength: 1,
         },
     },
     {

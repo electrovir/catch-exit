@@ -49,7 +49,9 @@ async function runTestFile(test: Readonly<TestCase>): Promise<string> {
     if (!existsSync(testFilePath)) {
         throw new Error(`Could not find test file at ${testFilePath}`);
     }
-    const results = await runShellCommand(`tsx ${interpolationSafeWindowsPath(testFilePath)}`);
+    const results = await runShellCommand(`tsx ${interpolationSafeWindowsPath(testFilePath)}`, {
+        hookUpToConsole: true,
+    });
 
     const logs = test.expected.includeStderr ? results.stdout + results.stderr : results.stdout;
     const fullLogs = results.stdout + results.stderr;
